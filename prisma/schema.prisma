@@ -13,15 +13,28 @@ generator dbml {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  email     String   @unique
-  password  String
-  firstname String?
-  lastname  String?
-  posts     Post[]
-  role      Role
+  id           String         @id @default(cuid())
+  kakaoId      String         @unique
+  kakaoProfile kakaoProfile[]
+  email        String         @unique
+  nickname     String?
+  ageRange     String?
+  birthday     String?
+  gender       String?
+  posts        Post[]
+  role         Role
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model kakaoProfile {
+  id                String   @id @default(cuid())
+  user              User?    @relation(fields: [userKakaoId], references: [kakaoId])
+  userKakaoId       String?
+  profileImageUrl   String?
+  thumbnailImageUrl String?
+  connectedAt       String?
+  createdAt         DateTime @default(now())
 }
 
 model Post {
@@ -38,4 +51,5 @@ model Post {
 enum Role {
   ADMIN
   USER
+  BLACK
 }

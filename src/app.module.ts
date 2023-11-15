@@ -1,16 +1,17 @@
-import { GraphQLModule } from '@nestjs/graphql';
-import { Logger, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { PrismaModule, loggingMiddleware } from 'nestjs-prisma';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AppResolver } from './app.resolver';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { PostsModule } from './posts/posts.module';
-import config from './common/configs/config';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { GqlConfigService } from './gql-config.service';
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
+import { Logger, Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { GraphQLModule } from "@nestjs/graphql";
+import { loggingMiddleware, PrismaModule } from "nestjs-prisma";
+
+import { AppController } from "./app.controller";
+import { AppResolver } from "./app.resolver";
+import { AppService } from "./app.service";
+import { AuthModule } from "./auth/auth.module";
+import config from "./common/configs/config";
+import { GqlConfigService } from "./gql-config.service";
+import { PostsModule } from "./posts/posts.module";
+import { UsersModule } from "./users/users.module";
 
 @Module({
   imports: [
@@ -21,8 +22,8 @@ import { GqlConfigService } from './gql-config.service';
         middlewares: [
           // configure your prisma middleware
           loggingMiddleware({
-            logger: new Logger('PrismaMiddleware'),
-            logLevel: 'log',
+            logger: new Logger("PrismaMiddleware"),
+            logLevel: "log",
           }),
         ],
       },

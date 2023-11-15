@@ -11,11 +11,6 @@ type Auth {
   user: User!
 }
 
-input ChangePasswordInput {
-  newPassword: String!
-  oldPassword: String!
-}
-
 input CreatePostInput {
   content: String!
   title: String!
@@ -31,17 +26,22 @@ A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction.
 """
 scalar JWT
 
-input LoginInput {
-  email: String!
-  password: String!
+type KakaoProfile {
+  connectedAt: String
+  profileImageUrl: String
+  thumbnailImageUrl: String
 }
 
 type Mutation {
-  changePassword(data: ChangePasswordInput!): User!
   createPost(data: CreatePostInput!): Post!
-  login(data: LoginInput!): Auth!
+  login(
+    """카카오 인가 코드"""
+    code: String!
+
+    """카카오 리다이렉트 URI"""
+    redirectUri: String!
+  ): Auth!
   refreshToken(token: JWT!): Token!
-  signup(data: SignupInput!): Auth!
   updateUser(data: UpdateUserInput!): User!
 }
 
@@ -101,14 +101,8 @@ type Query {
 """User role"""
 enum Role {
   ADMIN
+  BLACK
   USER
-}
-
-input SignupInput {
-  email: String!
-  firstname: String
-  lastname: String
-  password: String!
 }
 
 type Subscription {
@@ -129,12 +123,17 @@ input UpdateUserInput {
 }
 
 type User {
+  ageRange: String
+  birthday: String
+
   """Identifies the date and time when the object was created."""
   createdAt: DateTime!
   email: String!
-  firstname: String
+  gender: String
   id: ID!
-  lastname: String
+  kakaoId: String
+  kakaoProfile: [KakaoProfile!]
+  nickname: String
   posts: [Post!]
   role: Role!
 

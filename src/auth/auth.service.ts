@@ -1,39 +1,41 @@
-import { PrismaService } from 'nestjs-prisma';
-import { Prisma, User } from '@prisma/client';
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  ConflictException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { PasswordService } from './password.service';
-import { SignupInput } from './dto/signup.input';
-import { Token } from './models/token.model';
-import { SecurityConfig } from '../common/configs/config.interface';
+import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { JwtService } from "@nestjs/jwt";
+import { Prisma, User } from "@prisma/client";
+import { PrismaService } from "nestjs-prisma";
+
+import { SignupInput } from "./dto/signup.input";
+import { Token } from "./models/token.model";
+import { SecurityConfig } from "../common/configs/config.interface";
+import { KakaoLoginService } from "../users/kakao-oauth/kakao-oauth.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
-    private readonly passwordService: PasswordService,
     private readonly configService: ConfigService,
+    private readonly kakaoLoginService: KakaoLoginService,
   ) {}
 
   async createUser(payload: SignupInput): Promise<Token> {
-    const hashedPassword = await this.passwordService.hashPassword(
-      payload.password,
-    );
-
     try {
       const user = await this.prisma.user.create({
         data: {
-          ...payload,
-          password: hashedPassword,
-          role: 'USER',
+          kakaoId: payload.kakaoId,
+          email: payload.email,
+          nickname: payload.nickname,
+          ageRange: payload.ageRange,
+          birthday: payload.birthday,
+          gender: payload.gender,
+          role: "USER",
+          kakaoProfile: {
+            create: {
+              profileImageUrl: payload.profileImageUrl,
+              thumbnailImageUrl: payload.thumbnailImageUrl,
+              connectedAt: payload.connectedAt,
+            },
+          },
         },
       });
 
@@ -41,35 +43,42 @@ export class AuthService {
         userId: user.id,
       });
     } catch (e) {
-      if (
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        e.code === 'P2002'
-      ) {
-        throw new ConflictException(`Email ${payload.email} already used.`);
-      }
       throw new Error(e);
     }
   }
 
-  async login(email: string, password: string): Promise<Token> {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-
-    if (!user) {
-      throw new NotFoundException(`No user found for email: ${email}`);
+  async kakaoLogin(code: string, redirectUri: string): Promise<Token> {
+    try {
+      // 받아온 파라미터로 카카오 토큰을 받아옵니다.
+      const tokenResponse = await this.kakaoLoginService.getToken(code, redirectUri);
+      // 받은 토큰으로 유저정보를 받아옵니다.
+      const kakaoUser = await this.kakaoLoginService.getUser(tokenResponse.access_token);
+      // 받아온 유저정보의 kakaoId 가 이미 가입되어있는지 확인합니다.
+      const isJoined = await this.prisma.user.findUnique({ where: { kakaoId: kakaoUser.id.toString() } });
+      // 신규유저면 유저를 생성후 토큰을 반환합니다.
+      if (!isJoined) {
+        return this.createUser({
+          kakaoId: kakaoUser.id.toString(),
+          email: kakaoUser.kakao_account.email,
+          nickname: kakaoUser.properties.nickname,
+          connectedAt: kakaoUser.connected_at,
+          ageRange: kakaoUser.kakao_account.age_range,
+          birthday: kakaoUser.kakao_account.birthday,
+          gender: kakaoUser.kakao_account.gender,
+          profileImageUrl: kakaoUser.properties.profile_image,
+          thumbnailImageUrl: kakaoUser.properties.thumbnail_image,
+        });
+      }
+      // 이미 가입된 회원인 경우
+      else {
+        const userId = (await this.prisma.user.findUnique({ where: { kakaoId: kakaoUser.id.toString() } })).id;
+        return this.generateTokens({
+          userId: userId,
+        });
+      }
+    } catch (e) {
+      throw new Error(e);
     }
-
-    const passwordValid = await this.passwordService.validatePassword(
-      password,
-      user.password,
-    );
-
-    if (!passwordValid) {
-      throw new BadRequestException('Invalid password');
-    }
-
-    return this.generateTokens({
-      userId: user.id,
-    });
   }
 
   validateUser(userId: string): Promise<User> {
@@ -77,7 +86,7 @@ export class AuthService {
   }
 
   getUserFromToken(token: string): Promise<User> {
-    const id = this.jwtService.decode(token)['userId'];
+    const id = this.jwtService.decode(token)["userId"];
     return this.prisma.user.findUnique({ where: { id } });
   }
 
@@ -93,9 +102,9 @@ export class AuthService {
   }
 
   private generateRefreshToken(payload: { userId: string }): string {
-    const securityConfig = this.configService.get<SecurityConfig>('security');
+    const securityConfig = this.configService.get<SecurityConfig>("security");
     return this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_REFRESH_SECRET'),
+      secret: this.configService.get("JWT_REFRESH_SECRET"),
       expiresIn: securityConfig.refreshIn,
     });
   }
@@ -103,7 +112,7 @@ export class AuthService {
   refreshToken(token: string) {
     try {
       const { userId } = this.jwtService.verify(token, {
-        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        secret: this.configService.get("JWT_REFRESH_SECRET"),
       });
 
       return this.generateTokens({

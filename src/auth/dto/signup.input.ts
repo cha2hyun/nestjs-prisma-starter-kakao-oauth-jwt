@@ -1,20 +1,42 @@
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
-import { InputType, Field } from '@nestjs/graphql';
+import { Field, InputType } from "@nestjs/graphql";
+import { IsEmail, IsNotEmpty } from "class-validator";
 
 @InputType()
 export class SignupInput {
+  @IsNotEmpty()
+  kakaoId: string;
+
   @Field()
   @IsEmail()
   email: string;
 
-  @Field()
-  @IsNotEmpty()
-  @MinLength(8)
-  password: string;
+  @Field({ nullable: true })
+  nickname?: string;
 
   @Field({ nullable: true })
-  firstname?: string;
+  connectedAt?: string;
 
   @Field({ nullable: true })
-  lastname?: string;
+  ageRange?: string;
+
+  @Field({ nullable: true })
+  birthday?: string;
+
+  @Field({ nullable: true })
+  gender?: string;
+
+  @Field({ nullable: true })
+  profileImageUrl?: string;
+
+  @Field({ nullable: true })
+  thumbnailImageUrl?: string;
+}
+
+@InputType()
+export class KakaoProfileSignupInput {
+  @Field({ nullable: true })
+  profileImageUrl?: string;
+
+  @Field({ nullable: true })
+  thumbnailImageUrl?: string;
 }

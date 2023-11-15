@@ -1,9 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from 'nestjs-prisma';
-import { ConfigService } from '@nestjs/config';
-import { PasswordService } from './password.service';
+import { ConfigService } from "@nestjs/config";
+import { Test, TestingModule } from "@nestjs/testing";
+import { PrismaService } from "nestjs-prisma";
 
-describe('PasswordService', () => {
+import { PasswordService } from "./password.service";
+
+describe("PasswordService", () => {
   let service: PasswordService;
 
   beforeEach(async () => {
@@ -14,7 +15,7 @@ describe('PasswordService', () => {
     service = module.get<PasswordService>(PasswordService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 });
