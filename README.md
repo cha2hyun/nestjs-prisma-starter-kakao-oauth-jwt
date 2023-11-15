@@ -1,10 +1,10 @@
 # Instructions
 
-🚀 This project is generated from [notiz-dev/nestjs-prisma-starter](https://github.com/notiz-dev/nestjs-prisma-starter) starter template which is written in the [nestjs official documents](https://docs.nestjs.com/recipes/prisma). If you need more information, such as installation and setup, please check [README](https://github.com/notiz-dev/nestjs-prisma-starter#readme) on the template.
+🚀 This project is generated from [notiz-dev/nestjs-prisma-starter](https://github.com/notiz-dev/nestjs-prisma-starter) starter template which is referenced in the [NestJS official documentation](https://docs.nestjs.com/recipes/prisma). If you need more information, such as installation and setup, please check [README](https://github.com/notiz-dev/nestjs-prisma-starter#readme) within the template.
 
-👀 This project provides kakao oauth login with Passport JWT authentication.
+👀 This project provides Kakao Iauth login with Passport JWT authentication.
 
-📝 Feel free to let me know if you have any errors or questions, and pull request are welcome.
+📝 Feel free to let me know if encounter any errors or have any questions. Pull requests are welcome.
 
 <br>
 
@@ -25,7 +25,7 @@ Please check [kakao documents](https://developers.kakao.com/docs/latest/ko/javas
 ### 2. Login with kakao account. 
 <img width="1014" alt="image" src="https://github.com/cha2hyun/nestjs-prisma-starter-kakao-oauth-jwt/assets/56015532/6030789f-9fc0-4e55-80e8-4271d6929b51">
 
-For example here's some next.js frontend codes
+Here are some Next.js frontend code examples
 
 ```ts
 <Script
@@ -68,19 +68,19 @@ const handleLogin = useCallback(async () => {
 
 ### 3. Get Code Parameter.
 
-If your account pass the login, browser will redirect to your `redirectUri` with `code` parameters. 
+If your account passes the login, the browser will redirect to your `redirectUri` with `code` parameters. 
 <img width="1020" alt="image" src="https://github.com/cha2hyun/nestjs-prisma-starter-kakao-oauth-jwt/assets/56015532/77d7364f-70e6-4d37-b024-be0fb26f7df9">
-> url will be like `http://localhost:3002/auth/kakao?code=TJx7M1-sTWkrKQgvOTmfvSUnC5bD2GqtWrA....`
+> The URL will look like `http://localhost:3002/auth/kakao?code=TJx7M1-sTWkrKQgvOTmfvSUnC5bD2GqtWrA....`
 
 <br>
 
 
 
-### 4. Make mutation and waiting for server response
+### 4. Perform a Mutatuib and Await Server Response
 
-In your redirect page, you need to request login mutation to nest.js server with `code` and `redirectUri` as variables
+On your redirect page, initiate a login mutation to the Nest.js server using  `code` and `redirectUri` as variables.
 
-For example here's some next.js frontend codes 
+For instance, here are some Next.js frontend code snippets.
 
 ```ts
 /* eslint-disable no-console */
@@ -142,9 +142,9 @@ export default KakaoOauth;
 <br>
 
 
-### 5. Return JWT Token on nest.js server
+### 5. Returning JWT Token on the Nest.js server
 
-#### First on `auth.reslover.ts`
+#### First, `auth.reslover.ts`
 
 ```ts
 @Mutation(() => Auth)
@@ -165,7 +165,7 @@ it will call kakaoLogin functions in `auth.service.ts`
 
 <br>
 
-#### Second on `auth.service.ts` It will fetch `kakao access token` with `code` and `redirectUri` parameters.
+#### Second in `auth.service.ts` It will fetch the `kakao access token` using the `code` and `redirectUri` parameters.
 
 ```ts
 async kakaoLogin(code: string, redirectUri: string): Promise<Token> {
@@ -238,7 +238,7 @@ async kakaoLogin(code: string, redirectUri: string): Promise<Token> {
 
 <br>
 
-#### Third, Then it will try to fetch `kakao user information` with `access-code`
+#### Third, it will attempt to retrieve `Kakao user information` using the `access-code`
 ```ts
 async getUser(token: string) {
   try {
@@ -268,7 +268,7 @@ async getUser(token: string) {
 
 <br>
 
-#### Fourth, Using `id` on `kakao user information` to validate if user are already exist on database or not. If not it will create new user. and return JWT token generated with userId
+#### Fourth, utilizing the `id` from `kakao user information` to validate wheater the user already exist on database. If not it will create a new user and generate a JWT token associated with the `userId`, returning it.
 
 ```ts
 async createUser(payload: SignupInput): Promise<Token> {
@@ -302,14 +302,14 @@ async createUser(payload: SignupInput): Promise<Token> {
 
 <br>
 
-#### Fifth, Otherwise if user are already exist on database, It will return JWT token genertated with userId
+#### Fifthly, if the user already exists on database. It will return a JWT token genertated with the `userId`
 
 <br>
 
 
-### 6. Save Returned JWT Token on your frontend
+### 6. Saving Returned JWT Token on your frontend
 
-Token will be returned to frontend. save it on browser.
+The token will be returned to frontend. ensure to save it within the browser.
 
 <img width="1012" alt="image" src="https://github.com/cha2hyun/nestjs-prisma-starter-kakao-oauth-jwt/assets/56015532/3788177a-9ba5-42b3-874f-8882c1cb02aa">
 
@@ -321,9 +321,9 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbG95aDBydXIwMDAwM2hvYm9taTl
 
 <br>
 
-### 7. Get Me Query using jwt tokens
+### 7. Execute the 'Me' query using JWT tokens.
 
-Add Authorization header with your JWT tokens and get Me query 
+Add Authorization header with your JWT tokens to retrieve 'Me'
 `Authorization : Bearer "YOUR JWT TOKENS"`
 
 <img width="1327" alt="스크린샷 2023-11-15 오후 5 28 01" src="https://github.com/cha2hyun/nestjs-prisma-starter-kakao-oauth-jwt/assets/56015532/7a883a36-0f8b-47bd-bf6d-b798c5b353b8">
@@ -335,7 +335,7 @@ Add Authorization header with your JWT tokens and get Me query
 
 > with worng token
 
-### 8. Start to build your own projects 🚀
+### 8. Begin building your own projects 🚀
 
 
 
