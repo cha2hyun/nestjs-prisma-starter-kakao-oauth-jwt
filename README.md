@@ -10,7 +10,7 @@
 
 ## Features
 
-- Validate with id (or email) given by kakao oauth
+- login/signup with kakao account with JWT tokens
 
 <br>
 
