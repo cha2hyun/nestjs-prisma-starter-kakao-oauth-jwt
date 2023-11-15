@@ -18,7 +18,7 @@
 
 ### 1. Setup a kakao sdk in your frontend.
 
-Please check [kakao documents](https://developers.kakao.com/docs/latest/ko/javascript/download) for setup
+Please check [kakao documents](https://developers.kakao.com/docs/latest/ko/javascript/download) for setup. In my case i use next.js for the example.
 
 <br>
 
@@ -77,7 +77,7 @@ If your account passes the login, the browser will redirect to your `redirectUri
 
 
 
-### 4. Perform a Mutatuib and Await Server Response
+### 4. Perform a Mutation and Await Server Response
 
 On your redirect page, initiate a login mutation to the Nest.js server using  `code` and `redirectUri` as variables.
 
