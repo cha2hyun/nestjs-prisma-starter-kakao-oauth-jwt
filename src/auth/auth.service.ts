@@ -49,13 +49,9 @@ export class AuthService {
 
   async kakaoLogin(code: string, redirectUri: string): Promise<Token> {
     try {
-      // 받아온 파라미터로 카카오 토큰을 받아옵니다.
       const tokenResponse = await this.kakaoLoginService.getToken(code, redirectUri);
-      // 받은 토큰으로 유저정보를 받아옵니다.
       const kakaoUser = await this.kakaoLoginService.getUser(tokenResponse.access_token);
-      // 받아온 유저정보의 kakaoId 가 이미 가입되어있는지 확인합니다.
       const isJoined = await this.prisma.user.findUnique({ where: { kakaoId: kakaoUser.id.toString() } });
-      // 신규유저면 유저를 생성후 토큰을 반환합니다.
       if (!isJoined) {
         return this.createUser({
           kakaoId: kakaoUser.id.toString(),
@@ -69,7 +65,6 @@ export class AuthService {
           thumbnailImageUrl: kakaoUser.properties.thumbnail_image,
         });
       }
-      // 이미 가입된 회원인 경우
       else {
         const userId = (await this.prisma.user.findUnique({ where: { kakaoId: kakaoUser.id.toString() } })).id;
         return this.generateTokens({
