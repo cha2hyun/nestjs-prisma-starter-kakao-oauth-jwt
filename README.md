@@ -335,6 +335,8 @@ Add Authorization header with your JWT tokens to retrieve 'Me'
 
 > with worng token
 
+<br>
+
 ### 8. Begin building your own projects 🚀
 
 
