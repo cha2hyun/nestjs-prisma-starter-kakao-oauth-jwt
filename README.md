@@ -2,7 +2,7 @@
 
 🚀 This project is generated from [notiz-dev/nestjs-prisma-starter](https://github.com/notiz-dev/nestjs-prisma-starter) starter template which is referenced in the [NestJS official documentation](https://docs.nestjs.com/recipes/prisma). If you need more information, such as installation and setup, please check [README](https://github.com/notiz-dev/nestjs-prisma-starter#readme) within the template.
 
-👀 This project provides Kakao Iauth login with Passport JWT authentication.
+👀 This project provides Kakao auth login with Passport JWT authentication.
 
 📝 Feel free to let me know if encounter any errors or have any questions. Pull requests are welcome.
 
