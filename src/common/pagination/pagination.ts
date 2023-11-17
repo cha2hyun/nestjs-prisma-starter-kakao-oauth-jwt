@@ -1,7 +1,7 @@
-import { Type } from "@nestjs/common";
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Type } from '@nestjs/common';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { PageInfo } from "./page-info.model";
+import { PageInfo } from './page-info.model';
 
 export default function Paginated<TItem>(TItemClass: Type<TItem>) {
   @ObjectType(`${TItemClass.name}Edge`)

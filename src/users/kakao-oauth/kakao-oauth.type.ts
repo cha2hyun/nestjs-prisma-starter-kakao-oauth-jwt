@@ -38,6 +38,6 @@ export type KakaoV2UserMe = {
     birthday_type: string;
     has_gender?: boolean;
     gender_needs_agreement: boolean;
-    gender?: "male" | "female";
+    gender?: 'male' | 'female';
   };
 };

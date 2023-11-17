@@ -1,12 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "nestjs-prisma";
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
 
-import { UpdateUserInput } from "./dto/update-user.input";
-import { PasswordService } from "../auth/password.service";
+import { UpdateUserInput } from './dto/update-user.input';
+import { PasswordService } from '../auth/password.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService, private passwordService: PasswordService) {}
+  constructor(
+    private prisma: PrismaService,
+    private passwordService: PasswordService,
+  ) {}
 
   updateUser(userId: string, newUserData: UpdateUserInput) {
     return this.prisma.user.update({

@@ -1,6 +1,6 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common';
 
-import { PostsResolver } from "./posts.resolver";
+import { PostsResolver } from './posts.resolver';
 
 @Module({
   imports: [],

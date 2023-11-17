@@ -1,13 +1,13 @@
-import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
-import { Prisma, User } from "@prisma/client";
-import { PrismaService } from "nestjs-prisma";
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import { PrismaService } from 'nestjs-prisma';
 
-import { SignupInput } from "./dto/signup.input";
-import { Token } from "./models/token.model";
-import { SecurityConfig } from "../common/configs/config.interface";
-import { KakaoLoginService } from "../users/kakao-oauth/kakao-oauth.service";
+import { SignupInput } from './dto/signup.input';
+import { Token } from './models/token.model';
+import { SecurityConfig } from '../common/configs/config.interface';
+import { KakaoLoginService } from '../users/kakao-oauth/kakao-oauth.service';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +28,7 @@ export class AuthService {
           ageRange: payload.ageRange,
           birthday: payload.birthday,
           gender: payload.gender,
-          role: "USER",
+          role: 'USER',
           kakaoProfile: {
             create: {
               profileImageUrl: payload.profileImageUrl,
@@ -49,9 +49,16 @@ export class AuthService {
 
   async kakaoLogin(code: string, redirectUri: string): Promise<Token> {
     try {
-      const tokenResponse = await this.kakaoLoginService.getToken(code, redirectUri);
-      const kakaoUser = await this.kakaoLoginService.getUser(tokenResponse.access_token);
-      const isJoined = await this.prisma.user.findUnique({ where: { kakaoId: kakaoUser.id.toString() } });
+      const tokenResponse = await this.kakaoLoginService.getToken(
+        code,
+        redirectUri,
+      );
+      const kakaoUser = await this.kakaoLoginService.getUser(
+        tokenResponse.access_token,
+      );
+      const isJoined = await this.prisma.user.findUnique({
+        where: { kakaoId: kakaoUser.id.toString() },
+      });
       if (!isJoined) {
         return this.createUser({
           kakaoId: kakaoUser.id.toString(),
@@ -64,9 +71,12 @@ export class AuthService {
           profileImageUrl: kakaoUser.properties.profile_image,
           thumbnailImageUrl: kakaoUser.properties.thumbnail_image,
         });
-      }
-      else {
-        const userId = (await this.prisma.user.findUnique({ where: { kakaoId: kakaoUser.id.toString() } })).id;
+      } else {
+        const userId = (
+          await this.prisma.user.findUnique({
+            where: { kakaoId: kakaoUser.id.toString() },
+          })
+        ).id;
         return this.generateTokens({
           userId: userId,
         });
@@ -81,7 +91,7 @@ export class AuthService {
   }
 
   getUserFromToken(token: string): Promise<User> {
-    const id = this.jwtService.decode(token)["userId"];
+    const id = this.jwtService.decode(token)['userId'];
     return this.prisma.user.findUnique({ where: { id } });
   }
 
@@ -97,9 +107,9 @@ export class AuthService {
   }
 
   private generateRefreshToken(payload: { userId: string }): string {
-    const securityConfig = this.configService.get<SecurityConfig>("security");
+    const securityConfig = this.configService.get<SecurityConfig>('security');
     return this.jwtService.sign(payload, {
-      secret: this.configService.get("JWT_REFRESH_SECRET"),
+      secret: this.configService.get('JWT_REFRESH_SECRET'),
       expiresIn: securityConfig.refreshIn,
     });
   }
@@ -107,7 +117,7 @@ export class AuthService {
   refreshToken(token: string) {
     try {
       const { userId } = this.jwtService.verify(token, {
-        secret: this.configService.get("JWT_REFRESH_SECRET"),
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
       });
 
       return this.generateTokens({
